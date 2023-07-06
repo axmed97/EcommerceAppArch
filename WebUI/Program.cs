@@ -1,7 +1,15 @@
+using Business.Abstract;
+using Business.Concrete;
+using WebUI.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<ICategoryService, CategoryManager>();
+
+
 
 var app = builder.Build();
 
