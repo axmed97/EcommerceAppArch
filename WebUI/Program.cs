@@ -1,5 +1,7 @@
 using Business.Abstract;
 using Business.Concrete;
+using DataAccess.Abstract;
+using DataAccess.Concrete;
 using WebUI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+
+// AddScoped, AddSingleton, AddTransiet
 builder.Services.AddScoped<ICategoryService, CategoryManager>();
+builder.Services.AddScoped<ICategoryDAL, EFCategoryDAL>();
 
 
 

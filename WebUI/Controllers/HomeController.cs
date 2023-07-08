@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Business.Abstract;
+using Entities.Concrete;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WebUI.Models;
 
@@ -7,15 +9,17 @@ namespace WebUI.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICategoryService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ICategoryService categoryService)
         {
             _logger = logger;
+            _categoryService = categoryService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_categoryService.GetAllCategory());
         }
 
         public IActionResult Privacy()
