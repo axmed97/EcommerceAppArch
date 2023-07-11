@@ -8,6 +8,7 @@ namespace Entities.Concrete
 {
     public class CategoryLanguage
     {
+        public int Id { get; set; }
         public string CategoryName { get; set; }
         public string SeoUrl { get; set; }
         public string LangCode { get; set; }

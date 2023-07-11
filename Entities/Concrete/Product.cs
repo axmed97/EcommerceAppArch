@@ -17,5 +17,6 @@ namespace Entities.Concrete
         public Category Category { get; set; }
         public string UserId { get; set; }
         public User User { get; set; }
+        public bool IsFeatured { get; set; }
     }   
 }

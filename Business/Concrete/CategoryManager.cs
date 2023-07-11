@@ -20,12 +20,27 @@ namespace Business.Concrete
 
         public void AddCategory(Category category)
         {
-            _categoryDAL.Add(category);
+            throw new NotImplementedException();
         }
 
-        public List<Category> GetAllCategory()
+        public void DeleteCategory(Category category)
         {
-            return _categoryDAL.GetAll();
+            throw new NotImplementedException();
+        }
+
+        public List<Category> GetAllCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Category> GetAllNavbarCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            throw new NotImplementedException();
         }
     }
 }
