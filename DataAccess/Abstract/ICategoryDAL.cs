@@ -8,5 +8,6 @@ namespace DataAccess.Abstract
     public interface ICategoryDAL : IRepositoryBase<Category>
     {
         List<CategoryHomeListDTO> GetAllCategoriesLanguages(string langCode);
+        Task<bool> AddCategoryByLanguages(CategoryAddDTO categoyAddDTO);
     }
 }

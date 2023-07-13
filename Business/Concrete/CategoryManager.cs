@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs.CategoryDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,9 @@ namespace Business.Concrete
             _categoryDAL = categoryDAL;
         }
 
-        public void AddCategory(Category category)
+        public void AddCategory(CategoryAddDTO category)
         {
-            throw new NotImplementedException();
+            _categoryDAL.AddCategoryByLanguages(category);
         }
 
         public void DeleteCategory(Category category)
@@ -28,9 +29,9 @@ namespace Business.Concrete
             throw new NotImplementedException();
         }
 
-        public List<Category> GetAllCategories()
+        public List<CategoryHomeListDTO> GetAllCategories(string langCode)
         {
-            throw new NotImplementedException();
+            return _categoryDAL.GetAllCategoriesLanguages(langCode);
         }
 
         public List<Category> GetAllNavbarCategories()

@@ -1,13 +1,14 @@
 ﻿using Entities.Concrete;
+using Entities.DTOs.CategoryDTOs;
 
 namespace Business.Abstract
 {
     public interface ICategoryService
     {
-        void AddCategory(Category category);
+        void AddCategory(CategoryAddDTO category);
         void DeleteCategory(Category category);
         void UpdateCategory(Category category);
-        List<Category> GetAllCategories();
+        List<CategoryHomeListDTO> GetAllCategories(string langCode);
         List<Category> GetAllNavbarCategories();
     }
 }
