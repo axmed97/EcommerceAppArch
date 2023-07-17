@@ -1,4 +1,8 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Abstract;
+using Core.Utilities.Concrete;
+using Core.Utilities.Concrete.ErrorResult;
+using Core.Utilities.Concrete.SuccessResult;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.CategoryDTOs;
@@ -19,19 +23,28 @@ namespace Business.Concrete
             _categoryDAL = categoryDAL;
         }
 
-        public void AddCategory(CategoryAddDTO category)
+        public IResult AddCategory(CategoryAddDTO category)
         {
-            _categoryDAL.AddCategoryByLanguages(category);
+            try
+            {
+                _categoryDAL.AddCategoryByLanguages(category);
+                return new SuccessResult("Product Added Successfully!");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult(ex.Message);
+            }
         }
 
-        public void DeleteCategory(Category category)
+        public IResult DeleteCategory(Category category)
         {
             throw new NotImplementedException();
         }
 
-        public List<CategoryHomeListDTO> GetAllCategories(string langCode)
+        public IResultData<List<CategoryHomeListDTO>> GetAllCategories(string langCode)
         {
-            return _categoryDAL.GetAllCategoriesLanguages(langCode);
+            var result = _categoryDAL.GetAllCategoriesLanguages(langCode);
+            return new SuccessDataResult<List<CategoryHomeListDTO>>(result, "All Categories");
         }
 
         public List<Category> GetAllNavbarCategories()
@@ -39,7 +52,7 @@ namespace Business.Concrete
             throw new NotImplementedException();
         }
 
-        public void UpdateCategory(Category category)
+        public IResult UpdateCategory(Category category)
         {
             throw new NotImplementedException();
         }

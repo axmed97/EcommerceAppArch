@@ -94,6 +94,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -174,6 +175,10 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LangCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -408,7 +413,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.CategoryLanguage", b =>
                 {
                     b.HasOne("Entities.Concrete.Category", "Category")
-                        .WithMany()
+                        .WithMany("CategoryLanguages")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -426,7 +431,9 @@ namespace DataAccess.Migrations
 
                     b.HasOne("Entities.Concrete.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
 
@@ -436,7 +443,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.Picture", b =>
                 {
                     b.HasOne("Entities.Concrete.Product", "Product")
-                        .WithMany()
+                        .WithMany("Pictures")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -464,7 +471,7 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Entities.Concrete.ProductLanguage", b =>
                 {
                     b.HasOne("Entities.Concrete.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductLanguages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -521,6 +528,18 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Entities.Concrete.Category", b =>
+                {
+                    b.Navigation("CategoryLanguages");
+                });
+
+            modelBuilder.Entity("Entities.Concrete.Product", b =>
+                {
+                    b.Navigation("Pictures");
+
+                    b.Navigation("ProductLanguages");
                 });
 #pragma warning restore 612, 618
         }

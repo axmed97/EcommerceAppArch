@@ -19,7 +19,7 @@ namespace WebUI.Controllers
 
         public IActionResult Index()
         {
-            return View(_categoryService.GetAllCategories("Az"));
+            return View();
         }
 
         public IActionResult Privacy()

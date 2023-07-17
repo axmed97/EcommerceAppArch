@@ -1,0 +1,9 @@
+﻿@model User
+
+<button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">@Model.Firstname @Model.Lastname</button>
+<div class="dropdown-menu dropdown-menu-right">
+    <button class="dropdown-item" type="button">Profile</button>
+    <form method="post" asp-action="LogOut" asp-controller="Auth">
+        <button class="dropdown-item" type="submit">Log Out</button>
+    </form>
+</div>
