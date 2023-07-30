@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using static Entities.DTOs.ProductDTOs.ProductDTO;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -28,6 +29,7 @@ namespace DataAccess.Concrete.EntityFramework
             base.OnModelCreating(builder);
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
+            builder.Entity<ProductRecentDTO>().ToView(null);
         }
     }
 }

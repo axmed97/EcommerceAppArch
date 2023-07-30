@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Entities.DTOs.CategoryDTOs.CategoryDTO;
 
 namespace Business.Concrete
 {
@@ -41,10 +42,26 @@ namespace Business.Concrete
             throw new NotImplementedException();
         }
 
+        public async Task<IResultData<List<CategoryAdminListDTO>>> GetAllAdminCategories(string langCode)
+        {
+            var result = await _categoryDAL.GetAdminAllCategoriesLanguages(langCode);
+            if (result.Success)
+            {
+                return new SuccessDataResult<List<CategoryAdminListDTO>>(result.Data);
+            }
+            return new ErrorDataResult<List<CategoryAdminListDTO>>(result.Message);
+        }
+
         public IResultData<List<CategoryHomeListDTO>> GetAllCategories(string langCode)
         {
             var result = _categoryDAL.GetAllCategoriesLanguages(langCode);
             return new SuccessDataResult<List<CategoryHomeListDTO>>(result, "All Categories");
+        }
+
+        public IResultData<List<CategoryFeaturedDTO>> GetAllFeaturedCategory(string langCode)
+        {
+            var result = _categoryDAL.GetFeaturedCategory(langCode);
+            return new SuccessDataResult<List<CategoryFeaturedDTO>>(result.Data);
         }
 
         public List<Category> GetAllNavbarCategories()

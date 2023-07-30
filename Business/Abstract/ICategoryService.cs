@@ -1,6 +1,9 @@
 ﻿using Core.Utilities.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.CategoryDTOs;
+using Entities.DTOs.ProductDTOs;
+using static Entities.DTOs.CategoryDTOs.CategoryDTO;
+using static Entities.DTOs.ProductDTOs.ProductDTO;
 
 namespace Business.Abstract
 {
@@ -11,5 +14,7 @@ namespace Business.Abstract
         IResult UpdateCategory(Category category);
         IResultData<List<CategoryHomeListDTO>> GetAllCategories(string langCode);
         List<Category> GetAllNavbarCategories();
+        Task<IResultData<List<CategoryAdminListDTO>>> GetAllAdminCategories(string langCode);
+        IResultData<List<CategoryFeaturedDTO>> GetAllFeaturedCategory(string langCode);
     }
 }

@@ -1,5 +1,70 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿<form method="post" enctype="multipart/form-data">
+    <input type="text" name="ProductName" placeholder="Enter product name in Az" />
+    <br />
+    <input type="text" name="ProductName" placeholder="Enter product name in Ru" />
+    <br />
+    <input type="text" name="ProductName" placeholder="Enter product name in En" />
+    <br />
+
+    <input type="text" name="Description" placeholder="Enter Description in Az" />
+    <br />
+    <input type="text" name="Description" placeholder="Enter Description in Ru" />
+    <br />
+    <input type="text" name="Description" placeholder="Enter Description in En" />
+    <br />
+    <input type="number" name="Price" />
+    <input type="number" name="Discount" />
+    <input type="number" name="Quantity" />
+    <br />
+    <select name="CategoryId" asp-items="ViewBag.Categories"></select>
+    <br />
+    <input id="productPicture" multiple type="file" accept="image/*" name="photoUrls" />
+    <br />
+
+    <div class="card">
+        <div class="row">
+            <div class="col-2">
+                <div class="card p-3">
+                    <img class="img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLLUBkJgwdSnMEx7TGzJ5p_2kz8JxCGv1bW3EKuBCa2w&s" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <input type="submit" value="Create" />
+</form>
+
+
+@section Scripts {
+    <script>
+        const productPicture = document.querySelector("#productPicture");
+
+        productPicture.addEventListener('change', function(e){
+
+            console.log(productPicture.files)
+
+            var datas = new FormData();
+            
+            for(let i = 0; i < productPicture.files.length; i++){
+                datas.append("photoUrls", productPicture.files);
+            }
+
+            $.ajax({
+                url: '/Picture/UploadPictures',
+                type: "POST",
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                data: datas,
+                success: function(e){
+                    console.log(e);
+                }
+            })
+
+            
+        })
+
+        
+    </script>
 }

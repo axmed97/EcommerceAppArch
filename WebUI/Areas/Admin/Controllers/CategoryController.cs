@@ -14,8 +14,13 @@ namespace WebUI.Areas.Admin.Controllers
             _categoryService = categoryService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var result = await _categoryService.GetAllAdminCategories("Az");
+            if (result.Success)
+            {
+                return View(result.Data);
+            }
             return View();
         }
 

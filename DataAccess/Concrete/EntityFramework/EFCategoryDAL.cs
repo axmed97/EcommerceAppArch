@@ -1,8 +1,12 @@
 ﻿using Core.DataAccess.SQLServer.EntityFramework;
+using Core.Utilities.Abstract;
+using Core.Utilities.Concrete.ErrorResult;
+using Core.Utilities.Concrete.SuccessResult;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs.CategoryDTOs;
 using Microsoft.EntityFrameworkCore;
+using static Entities.DTOs.CategoryDTOs.CategoryDTO;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -44,6 +48,29 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
+        public async Task<IResultData<List<CategoryAdminListDTO>>> GetAdminAllCategoriesLanguages(string langCode)
+        {
+            using AppDbContext context = new();
+            try
+            {
+                var result = await context.Categories
+                    .Select(x => new CategoryAdminListDTO
+                    {
+                        CategoryName = x.CategoryLanguages.FirstOrDefault(x => x.LangCode == langCode).CategoryName,
+                        PhotoUrl = "/",
+                        IsFeatured = x.IsFeatured,
+                        Id = x.Id,
+                        ProductCount = 0
+                    }).ToListAsync();
+
+                return new SuccessDataResult<List<CategoryAdminListDTO>>(result);
+            }
+            catch (Exception ex)
+            {
+                return new ErrorDataResult<List<CategoryAdminListDTO>>(ex.Message);
+            }
+        }
+
         public List<CategoryHomeListDTO> GetAllCategoriesLanguages(string langCode)
         {
             using var context = new AppDbContext();
@@ -58,6 +85,22 @@ namespace DataAccess.Concrete.EntityFramework
                     PhotoUrl = x.Category.PhotoUrl,
                     ProductCount = 0
                 }).ToList();
+        }
+
+        public IResultData<List<CategoryFeaturedDTO>> GetFeaturedCategory(string langCode)
+        {
+            using AppDbContext context = new();
+
+            var result = context.Categories
+                .Include(x => x.CategoryLanguages)
+                .Where(x => x.IsFeatured == true)
+                .Select(x => new CategoryFeaturedDTO(x.Id, 
+                x.CategoryLanguages.FirstOrDefault(x => x.LangCode == langCode).CategoryName, 
+                x.PhotoUrl, 
+                x.CategoryLanguages.FirstOrDefault(x => x.LangCode == langCode).SeoUrl,
+                0)).ToList();
+
+            return new SuccessDataResult<List<CategoryFeaturedDTO>>(result);
         }
     }
 }
