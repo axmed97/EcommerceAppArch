@@ -58,10 +58,22 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CategoryHomeListDTO>>(result, "All Categories");
         }
 
+        public IResultData<int> GetAllCategories()
+        {
+            var result = _categoryDAL.GetAll().Count;
+            return new SuccessDataResult<int>(result);
+        }
+
         public IResultData<List<CategoryFeaturedDTO>> GetAllFeaturedCategory(string langCode)
         {
             var result = _categoryDAL.GetFeaturedCategory(langCode);
             return new SuccessDataResult<List<CategoryFeaturedDTO>>(result.Data);
+        }
+
+        public IResultData<IEnumerable<CategoryFilterDTO>> GetAllFilterCategories(string langCode)
+        {
+            var result = _categoryDAL.GetCategoryFilters(langCode);
+            return new SuccessDataResult<IEnumerable<CategoryFilterDTO>>(result);
         }
 
         public List<Category> GetAllNavbarCategories()

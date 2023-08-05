@@ -16,5 +16,7 @@ namespace Business.Abstract
         List<Category> GetAllNavbarCategories();
         Task<IResultData<List<CategoryAdminListDTO>>> GetAllAdminCategories(string langCode);
         IResultData<List<CategoryFeaturedDTO>> GetAllFeaturedCategory(string langCode);
+        IResultData<IEnumerable<CategoryFilterDTO>> GetAllFilterCategories(string langCode);
+        IResultData<int> GetAllCategories();
     }
 }

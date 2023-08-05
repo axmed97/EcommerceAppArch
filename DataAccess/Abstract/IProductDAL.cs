@@ -18,5 +18,6 @@ namespace DataAccess.Abstract
         IResultData<List<ProductFeaturedDTO>> GetFeaturedProducts(string langCode);
         IResultData<List<ProductRecentDTO>> GetRecentProducts(string langCode);
         ProductDetailDTO GetProductDetail(int id, string langCode);
+        IEnumerable<ProductFilteredDTO> GetProductFiltered(string langCode, int minPrice, int maxPrice, int pageNo, int take);
     }
 }

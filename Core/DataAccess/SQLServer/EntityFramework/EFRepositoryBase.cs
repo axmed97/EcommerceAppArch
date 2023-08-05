@@ -35,7 +35,7 @@ namespace Core.DataAccess.SQLServer.EntityFramework
         public List<TEntity> GetAll(Expression<Func<TEntity, bool>>? expression = null)
         {
             using TContext context = new();
-            return expression == null 
+            return expression == null
                 ? context.Set<TEntity>().ToList()
                 : context.Set<TEntity>().Where(expression).ToList();
         }

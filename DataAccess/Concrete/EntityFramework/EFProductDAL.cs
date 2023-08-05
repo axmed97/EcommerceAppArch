@@ -24,6 +24,14 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 using AppDbContext context = new();
 
+                List<Picture> pictureList = new();
+
+                for (int i = 0; i < productAdd.PhotoUrls.Count; i++)
+                {
+                    pictureList.Add(new Picture { PhotoUrl = productAdd.PhotoUrls[i] });
+                }
+                
+
                 Product product = new()
                 {
                     CategoryId = productAdd.CategoryId,
@@ -31,6 +39,7 @@ namespace DataAccess.Concrete.EntityFramework
                     Quantity = productAdd.Quantity,
                     Discount = productAdd.Discount,
                     IsFeatured = productAdd.IsFeatured,
+                    Pictures = pictureList
                 };
 
                 context.Products.Add(product);
@@ -125,6 +134,28 @@ namespace DataAccess.Concrete.EntityFramework
                     PhotoUrls = x.Pictures.Where(x => x.ProductId == id).Select(x => x.PhotoUrl).ToList(),
                 }).FirstOrDefault(x => x.Id == id);
 
+            return result;
+        }
+
+        public IEnumerable<ProductFilteredDTO> GetProductFiltered(string langCode, int minPrice, int maxPrice, int pageNo, int take)
+        {
+            using AppDbContext context = new();
+
+            int next = (pageNo - 1) * take;
+
+            var result = context.Products
+                .Include(x => x.ProductLanguages)
+                .Include(x => x.Pictures)
+                .Where(x => x.Price >= minPrice && x.Price <= maxPrice)
+                .Select(x => new ProductFilteredDTO
+                {
+                    Id = x.Id,
+                    Name = x.ProductLanguages.FirstOrDefault(x => x.LangCode == langCode).ProductName,
+                    Price = x.Price,
+                    Discount = x.Discount,
+                    PhotoUrl = x.Pictures.FirstOrDefault().PhotoUrl
+                }).Skip(next).Take(take).ToList();
+            
             return result;
         }
 

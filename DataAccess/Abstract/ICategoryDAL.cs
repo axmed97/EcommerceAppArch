@@ -13,5 +13,6 @@ namespace DataAccess.Abstract
         Task<bool> AddCategoryByLanguages(CategoryAddDTO categoyAddDTO);
         Task<IResultData<List<CategoryAdminListDTO>>> GetAdminAllCategoriesLanguages(string langCode);
         IResultData<List<CategoryFeaturedDTO>> GetFeaturedCategory(string langCode);
+        IEnumerable<CategoryFilterDTO> GetCategoryFilters(string langCode);
     }
 }

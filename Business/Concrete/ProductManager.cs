@@ -33,6 +33,12 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductFeaturedDTO>>(result.Data);
         }
 
+        public IResultData<IEnumerable<ProductFilteredDTO>> GetAllFilteredProducts(string langCode, int minPrice, int maxPrice, int pageNo, int take)
+        {
+            var result = _productDAL.GetProductFiltered(langCode, minPrice, maxPrice, pageNo, take);
+            return new SuccessDataResult<IEnumerable<ProductFilteredDTO>>(result);
+        }
+
         public IResultData<List<ProductRecentDTO>> GetAllRecentProducts(string langCode)
         {
             var result = _productDAL.GetRecentProducts(langCode);
@@ -55,6 +61,14 @@ namespace Business.Concrete
             var result = _productDAL.GetProductDetail(id, langCode);
 
             return new SuccessDataResult<ProductDetailDTO>(result);
+        }
+
+        public IResultData<int> GetProductCount(int take)
+        {
+            var count = _productDAL.GetAll().Count;
+            // GETALL dan istifade edin
+            int result = (int)Math.Ceiling((decimal)_productDAL.GetFeaturedProducts("az-Az").Data.Count / (decimal)take);
+            return new SuccessDataResult<int>(result);
         }
     }
 }

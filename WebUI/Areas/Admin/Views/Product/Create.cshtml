@@ -1,55 +1,83 @@
 ﻿<form method="post" enctype="multipart/form-data">
-    <input type="text" name="ProductName" placeholder="Enter product name in Az" />
-    <br />
-    <input type="text" name="ProductName" placeholder="Enter product name in Ru" />
-    <br />
-    <input type="text" name="ProductName" placeholder="Enter product name in En" />
-    <br />
 
-    <input type="text" name="Description" placeholder="Enter Description in Az" />
-    <br />
-    <input type="text" name="Description" placeholder="Enter Description in Ru" />
-    <br />
-    <input type="text" name="Description" placeholder="Enter Description in En" />
-    <br />
-    <input type="number" name="Price" />
-    <input type="number" name="Discount" />
-    <input type="number" name="Quantity" />
-    <br />
-    <select name="CategoryId" asp-items="ViewBag.Categories"></select>
-    <br />
-    <input id="productPicture" multiple type="file" accept="image/*" name="photoUrls" />
-    <br />
 
-    <div class="card">
-        <div class="row">
-            <div class="col-2">
-                <div class="card p-3">
-                    <img class="img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLLUBkJgwdSnMEx7TGzJ5p_2kz8JxCGv1bW3EKuBCa2w&s" />
-                </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#az" type="button" role="tab" aria-controls="home" aria-selected="true">Az</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#ru" type="button" role="tab" aria-controls="profile" aria-selected="false">Ru</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#en" type="button" role="tab" aria-controls="contact" aria-selected="false">En</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="az" role="tabpanel" aria-labelledby="home-tab">
+            <div class="form-group">
+                <input type="text" class="form-control" name="ProductName" placeholder="Enter product name in Az" />
+                <input type="text" class="form-control" name="Description" placeholder="Enter Description in Az" />
+
+            </div>
+        </div>
+        <div class="tab-pane fade" id="ru" role="tabpanel" aria-labelledby="profile-tab">
+            <div class="form-group">
+                <input type="text" class="form-control" name="ProductName" placeholder="Enter product name in Ru" />
+
+                <input type="text" class="form-control" name="Description" placeholder="Enter Description in Ru" />
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="contact-tab">
+            <div class="form-group">
+                <input type="text" class="form-control" name="ProductName" placeholder="Enter product name in En" />
+                <input type="text" class="form-control" name="Description" placeholder="Enter Description in En" />
+
             </div>
         </div>
     </div>
+    <div class="form-group">
+        <input class="form-control" type="number" name="Price" placeholder="Enter price..." />
 
-    <br />
-    <input type="submit" value="Create" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="number" name="Discount" placeholder="Enter discount..." />
+
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="number" name="Quantity" placeholder="Enter quantity..." />
+    </div>
+
+    <div class="form-group">
+        <select class="form-control" name="CategoryId" asp-items="ViewBag.Categories"></select>
+    </div>
+
+    <di class="form-group">
+        <input class="form-control" id="productPicture" multiple type="file" accept="image/*" name="photoUrls" />
+    </di    v>
+    <div class="card">
+        <div id="productList" class="row">
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-info" value="Create" />
 </form>
 
 
 @section Scripts {
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.min.js" integrity="sha512-fHY2UiQlipUq0dEabSM4s+phmn+bcxSYzXP4vAXItBvBHU7zAM/mkhCZjtBEIJexhOMzZbgFlPLuErlJF2b+0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
-        const productPicture = document.querySelector("#productPicture");
+        const productPicture = document.getElementById("productPicture");
+        const productList = document.getElementById("productList");
 
-        productPicture.addEventListener('change', function(e){
-
-            console.log(productPicture.files)
-
+        productPicture.addEventListener('change', function (e) {
+            console.log(this.files)
             var datas = new FormData();
-            
-            for(let i = 0; i < productPicture.files.length; i++){
-                datas.append("photoUrls", productPicture.files);
+            for (let i = 0; i < this.files.length; i++) {
+                datas.append("photoUrls", productPicture.files[i]);
             }
-
             $.ajax({
                 url: '/Picture/UploadPictures',
                 type: "POST",
@@ -57,14 +85,25 @@
                 contentType: false,
                 processData: false,
                 data: datas,
-                success: function(e){
+                success: function (e) {
                     console.log(e);
+                    CreateCard(e);
                 }
             })
-
-            
         })
+        function CreateCard(photo) {
+            for (let i = 0; i < photo.length; i++) {
+                productList.innerHTML +=
+                    `
+                            <div class="col-2">
+                                <div class="card p-3">
+                                    <img class="img-fluid" name="${photo[i]}" src="${photo[i]}" />
+                                    <input type="hidden" value="${photo[i]}" name="PhotoUrls" />
+                                </div>
+                            </div>
+                                                `
+            }
+        }
 
-        
     </script>
 }

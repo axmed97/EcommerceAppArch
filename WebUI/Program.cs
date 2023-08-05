@@ -16,7 +16,7 @@ builder.Services.AddScoped<AppDbContext>();
 // AddScoped, AddSingleton, AddTransiet
 builder.Services.AddScoped<ICategoryService, CategoryManager>();
 builder.Services.AddScoped<ICategoryDAL, EFCategoryDAL>();
-
+    
 builder.Services.AddScoped<IProductService, ProductManager>();
 builder.Services.AddScoped<IProductDAL, EFProductDAL>();
 

@@ -87,6 +87,19 @@ namespace DataAccess.Concrete.EntityFramework
                 }).ToList();
         }
 
+        public IEnumerable<CategoryFilterDTO> GetCategoryFilters(string langCode)
+        {
+            using AppDbContext context = new();
+            var result = context.Categories
+                .Include(x => x.CategoryLanguages)
+                .Select(x => new CategoryFilterDTO
+            {
+                Id = x.Id,
+                CategoryName = x.CategoryLanguages.FirstOrDefault(x => x.LangCode == langCode).CategoryName
+            }).ToList();
+            return result;
+        }
+
         public IResultData<List<CategoryFeaturedDTO>> GetFeaturedCategory(string langCode)
         {
             using AppDbContext context = new();

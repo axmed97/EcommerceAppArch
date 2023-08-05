@@ -16,5 +16,7 @@ namespace Business.Abstract
         IResultData<List<ProductFeaturedDTO>> GetAllFeaturedProducts(string langCode);
         IResultData<List<ProductRecentDTO>> GetAllRecentProducts(string langCode);
         IResultData<ProductDetailDTO> GetProductById(int id, string langCode);
+        IResultData<IEnumerable<ProductFilteredDTO>> GetAllFilteredProducts(string langCode, int minPrice, int maxPrice, int pageNo, int take);
+        IResultData<int> GetProductCount(int take);
     }
 }
