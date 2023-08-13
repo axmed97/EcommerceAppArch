@@ -18,6 +18,7 @@ namespace DataAccess.Abstract
         IResultData<List<ProductFeaturedDTO>> GetFeaturedProducts(string langCode);
         IResultData<List<ProductRecentDTO>> GetRecentProducts(string langCode);
         ProductDetailDTO GetProductDetail(int id, string langCode);
-        IEnumerable<ProductFilteredDTO> GetProductFiltered(string langCode, int minPrice, int maxPrice, int pageNo, int take);
+        IEnumerable<ProductFilteredDTO> GetProductFiltered(List<int> categoryIds, string langCode, int minPrice, int maxPrice, int pageNo, int take);
+        int GetProductCountByCategory(double take, List<int> categoryIds);
     }
 }

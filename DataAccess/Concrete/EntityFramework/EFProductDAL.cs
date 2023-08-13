@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Entities.DTOs.ProductDTOs.ProductDTO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -118,6 +119,15 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
+        public int GetProductCountByCategory(double take, List<int> categoryIds)
+        {
+
+            using var context = new AppDbContext();
+            var result = context.Products
+                .Where(x => categoryIds.Any() == false ? null == null : categoryIds.Contains(x.CategoryId)).Count();
+            return result;
+        }
+
         public ProductDetailDTO GetProductDetail(int id, string langCode)
         {
             using AppDbContext context = new();
@@ -137,7 +147,7 @@ namespace DataAccess.Concrete.EntityFramework
             return result;
         }
 
-        public IEnumerable<ProductFilteredDTO> GetProductFiltered(string langCode, int minPrice, int maxPrice, int pageNo, int take)
+        public IEnumerable<ProductFilteredDTO> GetProductFiltered(List<int> categoryIds, string langCode, int minPrice, int maxPrice, int pageNo, int take)
         {
             using AppDbContext context = new();
 
@@ -146,7 +156,7 @@ namespace DataAccess.Concrete.EntityFramework
             var result = context.Products
                 .Include(x => x.ProductLanguages)
                 .Include(x => x.Pictures)
-                .Where(x => x.Price >= minPrice && x.Price <= maxPrice)
+                .Where(x => x.Price >= minPrice && x.Price <= maxPrice && (categoryIds.Any()? categoryIds.Contains(x.CategoryId) : null == null))
                 .Select(x => new ProductFilteredDTO
                 {
                     Id = x.Id,

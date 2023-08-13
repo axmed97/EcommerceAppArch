@@ -33,9 +33,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductFeaturedDTO>>(result.Data);
         }
 
-        public IResultData<IEnumerable<ProductFilteredDTO>> GetAllFilteredProducts(string langCode, int minPrice, int maxPrice, int pageNo, int take)
+        public IResultData<IEnumerable<ProductFilteredDTO>> GetAllFilteredProducts(List<int> categoryIds, string langCode, int minPrice, int maxPrice, int pageNo, int take)
         {
-            var result = _productDAL.GetProductFiltered(langCode, minPrice, maxPrice, pageNo, take);
+            var result = _productDAL.GetProductFiltered(categoryIds, langCode, minPrice, maxPrice, pageNo, take);
             return new SuccessDataResult<IEnumerable<ProductFilteredDTO>>(result);
         }
 
@@ -63,12 +63,13 @@ namespace Business.Concrete
             return new SuccessDataResult<ProductDetailDTO>(result);
         }
 
-        public IResultData<int> GetProductCount(int take)
+        public IResultData<int> GetProductCount(double take, List<int> categoryIds)
         {
-            var count = _productDAL.GetAll().Count;
             // GETALL dan istifade edin
-            int result = (int)Math.Ceiling((decimal)_productDAL.GetFeaturedProducts("az-Az").Data.Count / (decimal)take);
-            return new SuccessDataResult<int>(result);
+            double res = _productDAL.GetProductCountByCategory(take, categoryIds) / take;
+            int productCountResult = (int)Math.Ceiling((double)res);
+
+            return new SuccessDataResult<int>(productCountResult);
         }
     }
 }

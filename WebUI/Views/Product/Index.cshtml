@@ -64,17 +64,14 @@
                         <label class="custom-control-label" for="price-all">All Color</label>
                         <span class="badge border font-weight-normal">1000</span>
                     </div>
-
                     @foreach (var item in Model.CategoryFilters)
                     {
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input type="checkbox" class="custom-control-input" id="color-1">
-                            <label class="custom-control-label" for="color-1">@item.CategoryName</label>
+                            <input value="@item.Id" type="checkbox" class="custom-control-input cats" id="color-1-@item.Id">
+                            <label class="custom-control-label" for="color-1-@item.Id">@item.CategoryName</label>
                             <span class="badge border font-weight-normal">150</span>
                         </div>
                     }
-                    
-
                 </form>
             </div>
             <!-- Color End -->
@@ -137,17 +134,20 @@
                             </div>
                             <div class="btn-group ml-2">
                                 <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Showing</button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="#">10</a>
-                                    <a class="dropdown-item" href="#">20</a>
-                                    <a class="dropdown-item" href="#">30</a>
-                                </div>
+                                
+                                <select onchange="GetProductCount()" id="countProduct">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
-                @foreach (var item in Model.ProductFiltereds)
-                {
+
+                <div id="productList" class="row">
+                    @*@foreach (var item in Model.ProductFiltereds)
+                    {
                     <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
                         <div class="product-item bg-light mb-4">
                             <div class="product-img position-relative overflow-hidden">
@@ -175,21 +175,21 @@
                             </div>
                         </div>
                     </div>
-
-                }
+                    }*@
+                </div>
                 
                 <div class="col-12">
                     <nav>
-                        <ul class="pagination justify-content-center">
+                        <ul id="pagination" class="pagination justify-content-center">
                             @if (ViewBag.CurrentPage > 1)
                             {
                                 <li class="page-item disabled"><a class="page-link" href="/product?page=@(ViewBag.CurrentPage - 1)">Previous</a></li>
                             }
-                            @for (int i = 0; i < ViewBag.ProductCount; i++)
+                           @* @for (int i = 0; i < ViewBag.ProductCount; i++)
                             {
-                                <li class="page-item @((i+1 == ViewBag.CurrentPage) ? "active" : "")"><a class="page-link" href="/product?page=@(i+1)">@(i + 1)</a></li>
+                                <li class="page-item @((i+1 == ViewBag.CurrentPage) ? "active" : "")"><a class="page-link" >@(i + 1)</a></li>
                             }
-                            
+                            *@
                             @if (ViewBag.CurrentPage < ViewBag.ProductCount)
                             {
                                 <li class="page-item"><a class="page-link" href="/product?page=@(ViewBag.CurrentPage + 1)">Next</a></li>
@@ -204,3 +204,112 @@
     </div>
 </div>
 <!-- Shop End -->
+
+@section Script{
+    <script>
+        const countProduct = document.querySelector('#countProduct');
+        const productList = document.querySelector('#productList');
+        const pageLink = document.querySelectorAll('.page-link');
+        const pageItem = document.querySelectorAll('.page-item');
+        const pagination = document.querySelector('#pagination');
+
+        const cats = document.querySelectorAll('.cats');
+
+
+
+        for(let i = 0; i < pageLink.length; i++){
+            pageLink[i].addEventListener('click', function(e){
+                for (let j = 0; j < pageItem.length; j++) {
+                    pageItem[j].classList.remove('active');
+                }
+                pageItem[i].classList.add('active')
+
+                GetFilteredData(pageLink[i].innerText, 3);
+            });
+        }
+
+
+
+        function GetProductCount(){
+            var value = countProduct.options[countProduct.selectedIndex].value;
+            GetFilteredData(1, value);
+        }
+
+        $(function(){
+            GetFilteredData(1, 3);
+        })
+
+        
+
+        function GetFilteredData(page, take){
+            let catList = [];
+            for (let i = 0; i < cats.length; i++) {
+                if (cats[i].checked) {
+                    catList.push(cats[i].value);
+                }
+            }
+
+
+            $.ajax({
+                type: 'GET',
+                url: `/Product/GetDatas?page=${page}&take=${take}&categoryList=${catList}`,
+                contentType: 'application/json',
+                success: function (e) {
+                    console.log(e)
+                    ProductList(e.products, e.productCount, take);
+                }
+            })
+        }
+
+
+        function ProductList(datas, productCount, take) {
+            productList.innerHTML = '';
+            for (let i = 0; i < datas.length; i++) {
+                productList.innerHTML += `
+                                    <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                                        <div class="product-item bg-light mb-4">
+                                            <div class="product-img position-relative overflow-hidden">
+                                                    <img class="img-fluid w-100" src="${datas[i].photoUrl}" alt="">
+                                                    <div class="product-action">
+                                                        <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
+                                                        <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
+                                                        <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
+                                                        <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
+                                                    </div>
+                                                    <div class="text-center py-4">
+                                                            <a class="h6 text-decoration-none text-truncate" href = "" > ${datas[i].name}</a>
+                                                        <div class="d-flex align-items-center justify-content-center mt-2">
+                                                $<h5>${datas[i].discount} </h5><h6 class="text-muted ml-2">$<del>${datas[i].price}</del > </h6>
+                                                        </div>
+                                                        <div class="d-flex align-items-center justify-content-center mb-1">
+                                                            <small class="fa fa-star text-primary mr-1"></small>
+                                                            <small class="fa fa-star text-primary mr-1"></small>
+                                                            <small class="fa fa-star text-primary mr-1"></small>
+                                                            <small class="fa fa-star text-primary mr-1"></small>
+                                                            <small class="fa fa-star text-primary mr-1"></small>
+                                                            <small>(99)</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                `
+            }
+
+            pagination.innerHTML = '';
+            for (let i = 0; i < productCount; i++) {
+                pagination.innerHTML +=
+                    `
+                    <li class="page-item">
+                        <a onclick="GetFilteredData(${i + 1}, ${take})" class="page-link">
+                            ${i + 1}
+                        </a>
+                    </li>
+                    `
+            }
+        }
+
+
+
+    </script>
+}
