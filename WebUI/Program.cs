@@ -1,25 +1,52 @@
-using Business.Abstract;
-using Business.Concrete;
-using DataAccess.Abstract;
+using Business.DependencyResolver;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
-using WebUI.Models;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
+using System.Globalization;
+using System.Reflection;
+using WebUI.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<AppDbContext>();
+builder.Services.AddSingleton<LanguageService>();
 
-// AddScoped, AddSingleton, AddTransiet
-builder.Services.AddScoped<ICategoryService, CategoryManager>();
-builder.Services.AddScoped<ICategoryDAL, EFCategoryDAL>();
-    
-builder.Services.AddScoped<IProductService, ProductManager>();
-builder.Services.AddScoped<IProductDAL, EFProductDAL>();
 
+builder.Services.AddMvc()
+                .AddViewLocalization()
+                .AddDataAnnotationsLocalization(options =>
+                {
+                    options.DataAnnotationLocalizerProvider = (type, factory) =>
+                    {
+                        var assemblyName = new AssemblyName(typeof(SharedResource).GetTypeInfo().Assembly.FullName);
+
+                        return factory.Create("ShareResource", assemblyName.Name);
+                    };
+                });
+
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+
+builder.Services.Configure<RequestLocalizationOptions>(
+                options =>
+                {
+                    var supportedCultures = new List<CultureInfo>
+
+                    {
+                        new CultureInfo("az"),
+                        new CultureInfo("en-US"),
+                        new CultureInfo("ru-RU")
+                    };
+
+                    options.DefaultRequestCulture = new RequestCulture(culture: "az", uiCulture: "az");
+
+                    options.SupportedCultures = supportedCultures;
+                    options.SupportedUICultures = supportedCultures;
+                    options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
+                });
 
 builder.Services.AddDefaultIdentity<User>().AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -29,17 +56,7 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.LoginPath = "/Auth/Login";
 });
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 6;
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(5);
-});
-
+builder.Services.Create();
 
 var app = builder.Build();
 
@@ -54,6 +71,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
+
 app.UseRouting();
 
 app.UseAuthentication();
@@ -63,7 +83,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
       name: "areas",
-      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}/{SeoUrl?}"
+      pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}/{SeoUrl?}"
     );
 });
 

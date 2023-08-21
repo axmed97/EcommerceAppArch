@@ -1,6 +1,7 @@
 ﻿using Core.DataAccess;
 using Core.Utilities.Abstract;
 using Entities.Concrete;
+using Entities.DTOs.CartDTOs;
 using Entities.DTOs.ProductDTOs;
 using System;
 using System.Collections.Generic;
@@ -20,5 +21,6 @@ namespace DataAccess.Abstract
         ProductDetailDTO GetProductDetail(int id, string langCode);
         IEnumerable<ProductFilteredDTO> GetProductFiltered(List<int> categoryIds, string langCode, int minPrice, int maxPrice, int pageNo, int take);
         int GetProductCountByCategory(double take, List<int> categoryIds);
+        List<UserCartDTO> GetUserCart(List<int> ids, string langCode);
     }
 }

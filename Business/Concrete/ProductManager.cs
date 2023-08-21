@@ -3,8 +3,10 @@ using Core.Utilities.Abstract;
 using Core.Utilities.Concrete.ErrorResult;
 using Core.Utilities.Concrete.SuccessResult;
 using DataAccess.Abstract;
+using Entities.DTOs.CartDTOs;
 using Entities.DTOs.ProductDTOs;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using System.Net.Http.Headers;
 using static Entities.DTOs.ProductDTOs.ProductDTO;
 
 namespace Business.Concrete
@@ -70,6 +72,23 @@ namespace Business.Concrete
             int productCountResult = (int)Math.Ceiling((double)res);
 
             return new SuccessDataResult<int>(productCountResult);
+        }
+
+        public IResultData<List<UserCartDTO>> GetProductForCart(List<int> ids, string langCode, List<int> quantity)
+        {
+            var result = _productDAL.GetUserCart(ids, langCode);
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].Quantity = quantity[i];
+            }
+
+            return new SuccessDataResult<List<UserCartDTO>>(result);
+        }
+
+        public IResultData<int> GetProductQuantityById(int productId)
+        {
+            var productCount = _productDAL.Get(x => x.Id == productId).Quantity;
+            return new SuccessDataResult<int>(productCount);
         }
     }
 }

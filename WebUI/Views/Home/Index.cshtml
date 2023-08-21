@@ -194,7 +194,7 @@
                 <div class="product-img position-relative overflow-hidden">
                     <img class="img-fluid w-100" src="@item.PhotoUrl" alt="">
                     <div class="product-action">
-                        <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a>
+                        <a class="btn btn-outline-dark btn-square" onclick="AddToCart(@item.Id)"><i class="fa fa-shopping-cart"></i></a>
                         <a class="btn btn-outline-dark btn-square" href=""><i class="far fa-heart"></i></a>
                         <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
                         <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a>
@@ -256,3 +256,33 @@
     </div>
 </div>
 <!-- Vendor End -->
+
+@section Script{
+    <script>
+        function AddToCart(id) {
+            let cart = {
+                id: id,
+                quantity: 1
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: `/Cart/AddToCart?id=${cart.id}&quantity=${cart.quantity}`,
+                contentType: 'application/json',
+                success: function (e) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Sebete elave olundu',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                },
+                error: function (e) {
+                    alert("Error");
+                }
+            })
+        }
+
+    </script>
+}

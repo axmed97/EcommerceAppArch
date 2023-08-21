@@ -1,4 +1,5 @@
 ﻿using Core.Utilities.Abstract;
+using Entities.DTOs.CartDTOs;
 using Entities.DTOs.ProductDTOs;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,7 @@ namespace Business.Abstract
         IResultData<ProductDetailDTO> GetProductById(int id, string langCode);
         IResultData<IEnumerable<ProductFilteredDTO>> GetAllFilteredProducts(List<int> categoryIds, string langCode, int minPrice, int maxPrice, int pageNo, int take);
         IResultData<int> GetProductCount(double take, List<int> categoryIds);
+        IResultData<int> GetProductQuantityById(int productId);
+        IResultData<List<UserCartDTO>> GetProductForCart(List<int> ids, string langCode, List<int> quantity);
     }
 }

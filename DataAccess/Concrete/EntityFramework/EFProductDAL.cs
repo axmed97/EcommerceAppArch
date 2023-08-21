@@ -5,6 +5,7 @@ using Core.Utilities.Concrete.SuccessResult;
 using Core.Utilities.SeoUrlHelper;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs.CartDTOs;
 using Entities.DTOs.ProductDTOs;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -174,6 +175,25 @@ namespace DataAccess.Concrete.EntityFramework
             using AppDbContext context = new();
             var result = context.Set<ProductRecentDTO>().FromSqlInterpolated($"EXEC GetRecentProducts @LangCode = {langCode}").ToList();
             return new SuccessDataResult<List<ProductRecentDTO>>(result);
+        }
+
+        public List<UserCartDTO> GetUserCart(List<int> ids, string langCode)
+        {
+            using AppDbContext context = new();
+
+            var result = context.Products
+                .Where(x => ids.Contains(x.Id))
+                .Include(x => x.ProductLanguages)
+                .Include(x => x.Pictures)
+                .Select(x => new UserCartDTO
+                {
+                    Id = x.Id,
+                    ProductName = x.ProductLanguages.FirstOrDefault(x => x.LangCode == langCode).ProductName,
+                    PhotoUrl = x.Pictures.FirstOrDefault().PhotoUrl,
+                    Price = x.Price
+                }).ToList();
+                
+            return result;
         }
     }
 }

@@ -47,7 +47,7 @@ namespace WebUI.Controllers
             var categories = _categoryService.GetAllFilterCategories("Az");
             var cats = new List<int>();
 
-            if(categoryList == null)
+            if(categoryList == "null")
             {
                 cats = categories.Data.Select(x => x.Id).ToList();
             }
@@ -63,7 +63,6 @@ namespace WebUI.Controllers
                 ProductCount = productCount,
                 Products = result.Data
             };
-
             return Json(paginationVM);
         }
     }

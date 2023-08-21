@@ -67,7 +67,7 @@
                     @foreach (var item in Model.CategoryFilters)
                     {
                         <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                            <input value="@item.Id" type="checkbox" class="custom-control-input cats" id="color-1-@item.Id">
+                            <input onclick="GetProductCategory()" value="@item.Id" type="checkbox" class="custom-control-input cats" id="color-1-@item.Id">
                             <label class="custom-control-label" for="color-1-@item.Id">@item.CategoryName</label>
                             <span class="badge border font-weight-normal">150</span>
                         </div>
@@ -219,12 +219,10 @@
 
         for(let i = 0; i < pageLink.length; i++){
             pageLink[i].addEventListener('click', function(e){
-                for (let j = 0; j < pageItem.length; j++) {
-                    pageItem[j].classList.remove('active');
-                }
-                pageItem[i].classList.add('active')
-
-                GetFilteredData(pageLink[i].innerText, 3);
+                let dataList = JSON.parse(localStorage.getItem("data"));
+                dataList.page = pageLink[i].innerText;
+                localStorage.setItem("data", JSON.stringify(dataList));
+                GetFilteredData();
             });
         }
 
@@ -232,33 +230,61 @@
 
         function GetProductCount(){
             var value = countProduct.options[countProduct.selectedIndex].value;
-            GetFilteredData(1, value);
+            let dataList = JSON.parse(localStorage.getItem("data"));
+            dataList.take = value;
+            localStorage.setItem("data", JSON.stringify(dataList));
+            GetFilteredData();
         }
 
         $(function(){
+            let cookieData = {
+                take: 3,
+                page: 1,
+                categories: null
+            };
+            localStorage.setItem("data", JSON.stringify(cookieData));
             GetFilteredData(1, 3);
         })
 
+
         
 
-        function GetFilteredData(page, take){
-            let catList = [];
-            for (let i = 0; i < cats.length; i++) {
-                if (cats[i].checked) {
-                    catList.push(cats[i].value);
-                }
-            }
+        function GetFilteredData(){
+            
 
+            let dataList = JSON.parse(localStorage.getItem("data"));
+            console.log(dataList);
 
             $.ajax({
                 type: 'GET',
-                url: `/Product/GetDatas?page=${page}&take=${take}&categoryList=${catList}`,
+                url: `/Product/GetDatas?page=${dataList.page}&take=${dataList.take}&categoryList=${dataList.categories}`,
                 contentType: 'application/json',
                 success: function (e) {
                     console.log(e)
-                    ProductList(e.products, e.productCount, take);
+                    ProductList(e.products, e.productCount, dataList.take);
                 }
             })
+        }
+
+        function GetProductCategory() {
+            let catList = "";
+            for (let i = 0; i < cats.length; i++) {
+                if (cats[i].checked) {
+                    catList += cats[i].value + ",";
+                }
+            }
+            let category = catList.substring(0, catList.length - 1);
+            let dataList = JSON.parse(localStorage.getItem("data"));
+            dataList.categories = category;
+            localStorage.setItem("data", JSON.stringify(dataList));
+            GetFilteredData();
+        }
+
+        function GetPage(data, page){
+            let dataList = JSON.parse(localStorage.getItem("data"));
+            dataList.page = data;
+            localStorage.setItem("data", JSON.stringify(dataList));
+            GetFilteredData();
         }
 
 
@@ -301,7 +327,7 @@
                 pagination.innerHTML +=
                     `
                     <li class="page-item">
-                        <a onclick="GetFilteredData(${i + 1}, ${take})" class="page-link">
+                        <a onclick="GetPage(${i + 1}, ${take})" class="page-link">
                             ${i + 1}
                         </a>
                     </li>
